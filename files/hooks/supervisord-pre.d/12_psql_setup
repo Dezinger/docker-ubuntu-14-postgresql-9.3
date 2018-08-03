@@ -44,7 +44,7 @@ function create_user
     then
         start_postgres
         set_password_for_auth_method
-        psql --command="CREATE ROLE $POSTGRES_USER WITH $AUTH_PASS SUPERUSER;"
+        psql --command="CREATE ROLE $POSTGRES_USER WITH $AUTH_PASS SUPERUSER CREATEDB CREATEROLE INHERIT LOGIN;" --dbname=postgres
         stop_postgres
     else
         echo "WARNING: Missing user credentials"
@@ -87,7 +87,7 @@ function configure_client_authentication
     sed -i \
         -e "s/^\(local *all *all *\).*/\1 ${POSTGRES_AUTH_METHOD}/" \
         -e "s|^\(host *all *all *\)127.*|\1 0.0.0.0/0            ${POSTGRES_AUTH_METHOD}|" \
-        #-e "s|^\(host *all *all *\)::1.*|\1 ::0/0            ${POSTGRES_AUTH_METHOD}|" \
+        -e "s|^\(host *all *all *\)::1.*|\1 ::0/0            ${POSTGRES_AUTH_METHOD}|" \
         ${PG_DBDIR}/pg_hba.conf
 }
 
@@ -123,8 +123,8 @@ function first_time
         init_postgres_database
         create_user
         create_db
-        edit_postgresql_conf
-        configure_client_authentication
+        #edit_postgresql_conf
+        #configure_client_authentication
     fi
 }
 
@@ -139,5 +139,5 @@ function remove_old_postmaster_pid
 }
 
 first_time
-chmod -R 700 ${PG_DBDIR}
-remove_old_postmaster_pid
+#chmod -R 700 ${PG_DBDIR}
+#remove_old_postmaster_pid
