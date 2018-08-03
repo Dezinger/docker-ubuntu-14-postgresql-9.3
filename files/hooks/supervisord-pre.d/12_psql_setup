@@ -42,10 +42,8 @@ function create_user
 {
     if [ ! -z $POSTGRES_USER ] && [ ! -z $POSTGRES_PASSWORD ]
     then
-        start_postgres
         set_password_for_auth_method
-        psql --command="CREATE ROLE $POSTGRES_USER WITH $AUTH_PASS SUPERUSER CREATEDB CREATEROLE INHERIT LOGIN;" --dbname=postgres
-        stop_postgres
+        sudo -u postgres $PG_BIN/postgres --single -D ${PG_DBDIR} <<< "CREATE ROLE $POSTGRES_USER WITH $AUTH_PASS SUPERUSER CREATEDB CREATEROLE INHERIT LOGIN;"
     else
         echo "WARNING: Missing user credentials"
     fi
@@ -56,9 +54,7 @@ function create_db
 {
     if [ ! -z $POSTGRES_DB ]
     then
-        start_postgres
-        psql --command="CREATE DATABASE $POSTGRES_DB WITH OWNER = $POSTGRES_USER TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'ru_RU.UTF-8' LC_CTYPE = 'ru_RU.UTF-8';"
-        stop_postgres
+        sudo -u postgres ${PG_BIN}/postgres --single -D ${PG_DBDIR} <<< "CREATE DATABASE $POSTGRES_DB WITH OWNER = $POSTGRES_USER TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'ru_RU.UTF-8' LC_CTYPE = 'ru_RU.UTF-8';"
     else
         echo "WARNING: Missing database name"
     fi
@@ -123,8 +119,8 @@ function first_time
         init_postgres_database
         create_user
         create_db
-        #edit_postgresql_conf
-        #configure_client_authentication
+        edit_postgresql_conf
+        configure_client_authentication
     fi
 }
 
@@ -139,5 +135,5 @@ function remove_old_postmaster_pid
 }
 
 first_time
-#chmod -R 700 ${PG_DBDIR}
-#remove_old_postmaster_pid
+chmod -R 700 ${PG_DBDIR}
+remove_old_postmaster_pid
