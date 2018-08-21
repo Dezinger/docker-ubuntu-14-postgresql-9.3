@@ -134,6 +134,7 @@ function remove_old_postmaster_pid
     fi
 }
 
+chown postgres:postgres /var/lib/postgresql
 first_time
 chmod -R 700 ${PG_DBDIR}
 remove_old_postmaster_pid
