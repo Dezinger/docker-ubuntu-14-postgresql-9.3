@@ -13,7 +13,9 @@ COPY files/ /
 RUN \
 # Add the PostgreSQL PGP key to verify their packages.
 # It should be the same key as https://www.postgresql.org/media/keys/ACCC4CF8.asc
-    apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8 && \
+    apt-get install -y gnupg && \
+    curl -s https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
+# Update
     apt-get -y update && apt-get install --no-install-recommends -y \ 
 # Install PostgreSQL
     postgresql-$PG_MAJOR \ 
