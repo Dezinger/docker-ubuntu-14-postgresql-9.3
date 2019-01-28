@@ -52,9 +52,12 @@ function create_user
 
 function create_db 
 {
-    if [ ! -z $POSTGRES_DB ]
+    if [ ! -z "$POSTGRES_DB" ]
     then
-        sudo -u postgres ${PG_BIN}/postgres --single -D ${PG_DBDIR} <<< "CREATE DATABASE $POSTGRES_DB WITH OWNER = $POSTGRES_USER TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'ru_RU.UTF-8' LC_CTYPE = 'ru_RU.UTF-8';"
+        for DB in ${POSTGRES_DB}
+        do
+            sudo -u postgres ${PG_BIN}/postgres --single -D ${PG_DBDIR} <<< "CREATE DATABASE $DB WITH OWNER = $POSTGRES_USER TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'ru_RU.UTF-8' LC_CTYPE = 'ru_RU.UTF-8';"
+        done        
     else
         echo "WARNING: Missing database name"
     fi
