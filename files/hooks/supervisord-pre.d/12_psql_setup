@@ -122,8 +122,6 @@ function first_time
         init_postgres_database
         create_user
         create_db
-        edit_postgresql_conf
-        configure_client_authentication
     fi
 }
 
@@ -139,5 +137,7 @@ function remove_old_postmaster_pid
 
 chown postgres:postgres /var/lib/postgresql
 first_time
+edit_postgresql_conf
+configure_client_authentication
 chmod -R 700 ${PG_DBDIR}
 remove_old_postmaster_pid
